@@ -15,8 +15,8 @@ services:
 
   backend:
     build:
-      context: ../cicd-project-backend   # path to backend repo
-      dockerfile: Dockerfile             # uses updated JDK 21 Dockerfile
+      context: ../cicd-project-backend
+      dockerfile: Dockerfile
     container_name: backend_app
     depends_on:
       - db
@@ -29,13 +29,13 @@ services:
 
   frontend:
     build:
-      context: ../cicd-project-frontend  # path to frontend repo
+      context: ../cicd-project-frontend
       dockerfile: Dockerfile
     container_name: frontend_app
     depends_on:
       - backend
     ports:
-      - "3000:3000"
+      - "3000:80"   # Nginx inside container serves on 80, mapped to host 3000
 
 volumes:
   db_data:
