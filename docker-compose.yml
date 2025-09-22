@@ -25,7 +25,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: Badri@8344
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     ports:
-      - "8080:8080"
+      - "8081:8081"
 
   frontend:
     build: ../cicd-project-frontend
