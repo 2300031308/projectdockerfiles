@@ -1,39 +1,41 @@
-version: "3.9"
-
 services:
-  frontend:
-    build: 
-      context: ../cicd-project-frontend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-
-  backend:
-    build:
-      context: ../cicd-project-backend
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/lldb
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: Badri@8344
-    depends_on:
-      - db
-
   db:
-    image: mysql:8
-    container_name: mysql-db
+    image: mysql:8.0
+    container_name: mysql_db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: Badri@8344
       MYSQL_DATABASE: lldb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: Badri@8344
     ports:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ../cicd-project-backend   # path to backend repo
+      dockerfile: Dockerfile             # uses updated JDK 21 Dockerfile
+    container_name: backend_app
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/lldb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Badri@8344
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ../cicd-project-frontend  # path to frontend repo
+      dockerfile: Dockerfile
+    container_name: frontend_app
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
 
 volumes:
   db_data:
