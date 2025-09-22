@@ -7,31 +7,35 @@ services:
       MYSQL_ROOT_PASSWORD: Badri@8344
       MYSQL_DATABASE: lldb
     ports:
-      - "3307:3306"   # expose MySQL on host at 3307
+      - "3307:3306"   # Expose MySQL on 3307 (host) → 3306 (container)
     volumes:
       - mysql_data:/var/lib/mysql
 
   backend:
-    build: ./cicd-project-backend
+    build:
+      context: ../cicd-project-backend   # point to backend repo (outside projectdockerfiles)
+      dockerfile: Dockerfile
     container_name: backend
     restart: always
-    depends_on:
-      - mysql
+    ports:
+      - "8081:8081"   # Spring Boot runs on 8081
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/lldb
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: Badri@8344
-    ports:
-      - "8081:8081"
+    depends_on:
+      - mysql
 
   frontend:
-    build: ./cicd-project-frontend
+    build:
+      context: ../cicd-project-frontend  # point to frontend repo (outside projectdockerfiles)
+      dockerfile: Dockerfile
     container_name: frontend
     restart: always
+    ports:
+      - "3000:80"   # Expose frontend on port 3000
     depends_on:
       - backend
-    ports:
-      - "3000:80"
 
 volumes:
   mysql_data:
