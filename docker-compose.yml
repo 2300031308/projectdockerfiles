@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   db:
     image: mysql:8.0
@@ -9,33 +11,32 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: Badri@8344
     ports:
-      - "3306:3306"
+      - "3307:3306"   # host:container mapping
     volumes:
       - db_data:/var/lib/mysql
 
   backend:
-    build:
-      context: ../cicd-project-backend
-      dockerfile: Dockerfile
+    build: ./cicd-project-backend
     container_name: backend_app
+    restart: always
     depends_on:
       - db
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/lldb
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: Badri@8344
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
     ports:
       - "8080:8080"
 
   frontend:
-    build:
-      context: ../cicd-project-frontend
-      dockerfile: Dockerfile
+    build: ./cicd-project-frontend
     container_name: frontend_app
+    restart: always
     depends_on:
       - backend
     ports:
-      - "3000:80"   # Nginx inside container serves on 80, mapped to host 3000
+      - "3000:80"
 
 volumes:
   db_data:
